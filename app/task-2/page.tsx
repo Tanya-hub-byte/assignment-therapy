@@ -16,10 +16,11 @@ export default function Task2Page() {
   const primaryText = "#3E3A5D";
   const stressText = "#4A445F";
 
- useEffect(() => {
+useEffect(() => {
   setIsMounted(true);
 
-  let scrollTimeout;
+  // Explicitly type the variable to avoid the 'implicit any' error
+  let scrollTimeout: NodeJS.Timeout;
 
   const handleScroll = () => {
     setShowHeader(true);
@@ -31,14 +32,15 @@ export default function Task2Page() {
     }, 80); // instant-feel disappearance
   };
 
+  // Ensure you add the event listener
   window.addEventListener('scroll', handleScroll);
 
+  // Clean up to prevent memory leaks
   return () => {
     window.removeEventListener('scroll', handleScroll);
     clearTimeout(scrollTimeout);
   };
 }, []);
-
 
 
   return (
