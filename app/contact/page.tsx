@@ -1,80 +1,106 @@
 'use client';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 
-export default function LegalPage() {
+export default function ContactPage() {
   const [isMounted, setIsMounted] = useState(false);
+  const [showFooter, setShowFooter] = useState(false);
+  const footerRef = useRef(null);
+
+  // Theme Colors aligned with Home Hero
+  const primaryIndigo = "#3E3A5D";
+  const bgIvory = "#F7F2EE";
 
   useEffect(() => {
     setIsMounted(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setShowFooter(true); },
+      { threshold: 0.1 }
+    );
+    if (footerRef.current) observer.observe(footerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <main className={`transition-opacity duration-1000 ${isMounted ? 'opacity-100' : 'opacity-0'} bg-maya-bg min-h-screen text-maya-text`}>
-      
-      {/* NAVIGATION (Same as Home) */}
-      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-maya-bg/90 backdrop-blur-md border-b border-gray-100">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="text-maya-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/>
-            </svg>
+    <main 
+      style={{ backgroundColor: bgIvory }}
+      className={`transition-opacity duration-1000 ${isMounted ? 'opacity-100' : 'opacity-0'} min-h-screen text-[${primaryIndigo}] font-gopher`}
+    >
+      {/* 1. NAVIGATION - Now correctly redirects to "/" */}
+      <nav className="absolute top-0 left-0 w-full z-50 px-8 py-10 flex justify-between items-center bg-transparent">
+        <Link href="/" className="flex items-center gap-3 cursor-pointer group">
+          <div className="flex flex-col">
+            <span className="font-serif text-2xl leading-none tracking-tight" style={{ color: primaryIndigo }}>Dr. Maya Reynolds</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] opacity-60 mt-1" style={{ color: primaryIndigo }}>Therapy & Wellness</span>
           </div>
-          <span className="font-serif text-xl">Lilac Template</span>
         </Link>
-        <div className="flex gap-8 items-center text-[11px] uppercase tracking-widest font-semibold">
-          <Link href="/blog" className="hover:text-maya-primary transition-colors">Blog</Link>
-          <Link href="/contact" className="hover:text-maya-primary transition-colors">Contact</Link>
+        
+        <div className="flex gap-10 items-center text-[11px] uppercase tracking-[0.2em] font-bold" style={{ color: primaryIndigo }}>
+          <Link href="/blog" className="hover:opacity-40 transition-opacity duration-300">Blog</Link>
+          <Link href="/contact" className="hover:opacity-40 transition-opacity duration-300">Contact</Link>
         </div>
       </nav>
 
-      {/* MAIN CONTENT (Mimicking the Error/Legal Info State) */}
-      <section className="pt-40 pb-20 px-8 max-w-4xl mx-auto">
-        <div className="border-b border-gray-200 pb-12 mb-12">
-          <h1 className="text-3xl font-serif mb-8 text-maya-text">We couldn't find the page you were looking for. This is either because:</h1>
-          <ul className="list-disc ml-6 space-y-4 text-gray-700 leading-relaxed">
-            <li>There is an error in the URL entered into your web browser. Please check the URL and try again.</li>
-            <li>The page you are looking for has been moved or deleted.</li>
-          </ul>
-          <p className="mt-8 text-gray-700">
-            You can return to our homepage by <Link href="/" className="underline hover:text-maya-primary transition-colors">clicking here</Link>, or you can try searching for the content you are seeking by clicking here.
-          </p>
+      {/* 2. CONTACT HERO - Same layout as Home Hero */}
+      <section className="min-h-screen flex flex-col md:flex-row items-center px-10 pt-32 pb-20 gap-16 max-w-7xl mx-auto">
+        {/* Left Side: Arched Image */}
+        <div className="w-full md:w-1/2 flex justify-center">
+          <div className="relative w-full max-w-lg aspect-[4/5] overflow-hidden rounded-t-full shadow-sm">
+            <img 
+              src="/maya-portrait.png" 
+              alt="Contact Dr. Maya Reynolds" 
+              className="object-cover w-full h-full" 
+            />
+          </div>
         </div>
 
-        {/* IMAGE DISPLAY: 2nd and 3rd Specialty Photos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="rounded-xl overflow-hidden shadow-lg border-4 border-white">
-            <img src="/lilac-flower.webp" alt="Relationship Therapy" className="w-full aspect-square object-cover" />
-          </div>
-          <div className="rounded-xl overflow-hidden shadow-lg border-4 border-white">
-            <img src="/lilac-flower2.webp" alt="Burnout Recovery" className="w-full aspect-square object-cover" />
+        {/* Right Side: Contact Content */}
+        <div className="w-full md:w-1/2 text-left">
+          <h1 className="text-6xl md:text-8xl font-serif leading-[0.9] tracking-tighter mb-10" style={{ color: primaryIndigo }}>
+            Reach out <br /> <span className="italic font-light">to connect</span>
+          </h1>
+          <p className="text-xl mb-12 max-w-md leading-relaxed opacity-80" style={{ color: primaryIndigo }}>
+            Located in Santa Monica, California. I offer in-person sessions and secure telehealth across the state.
+          </p>
+
+          {/* Simple Contact Info instead of button for direct reach */}
+          <div className="space-y-6">
+            <div className="border-t pt-8" style={{ borderColor: `${primaryIndigo}26` }}>
+              <h4 className="text-[10px] uppercase tracking-widest font-bold opacity-60 mb-2">Email</h4>
+              <a href="mailto:hello@drmaya.com" className="text-2xl hover:opacity-50 transition-opacity underline decoration-1 underline-offset-8">hello@drmaya.com</a>
+            </div>
+            <div className="border-t pt-8" style={{ borderColor: `${primaryIndigo}26` }}>
+              <h4 className="text-[10px] uppercase tracking-widest font-bold opacity-60 mb-2">Phone</h4>
+              <p className="text-2xl">(555) 555-5555</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER (Same as Home) */}
-      <footer className="bg-maya-bg pt-20 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-          <div className="space-y-4">
-            <h3 className="text-2xl font-serif uppercase tracking-widest text-maya-primary">Lilac Template</h3>
-            <p className="text-gray-600">123 Example Road<br />Minneapolis, MN</p>
-            <div className="flex flex-col gap-1 text-sm">
-              <a href="mailto:email@example.com" className="underline hover:text-maya-primary">email@example.com</a>
-              <a href="tel:5555555555" className="hover:text-maya-primary">(555) 555-5555</a>
-            </div>
+      {/* 3. FOOTER - Updated for Santa Monica */}
+      <footer ref={footerRef} className={`pt-20 transition-all duration-1000 transform ${showFooter ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`} style={{ backgroundColor: bgIvory }}>
+        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-12 mb-20 font-gopher">
+          <div className="space-y-6">
+            <h3 className="text-4xl font-serif font-bold" style={{ color: primaryIndigo }}>Dr. Maya Reynolds</h3>
+            <p className="opacity-80" style={{ color: primaryIndigo }}>Private Office in <br /> Santa Monica, California</p>
           </div>
           <div>
-            <h4 className="font-bold mb-4 uppercase text-[10px] tracking-widest text-gray-400">Hours</h4>
-            <p className="text-gray-600">Monday – Friday<br />10am – 6pm</p>
+            <h4 className="text-3xl font-serif mb-8" style={{ color: primaryIndigo }}>Hours</h4>
+            <p className="opacity-80" style={{ color: primaryIndigo }}>Monday – Friday <br /> By Appointment Only</p>
           </div>
           <div className="md:text-right">
-            <h4 className="font-bold mb-4 uppercase text-[10px] tracking-widest text-gray-400">Find</h4>
-            <nav className="flex flex-col gap-2 text-sm">
-              <Link href="/" className="hover:underline">Home</Link>
-              <Link href="/contact" className="hover:underline">Contact</Link>
-              <Link href="/blog" className="hover:underline">Blog</Link>
+            <h4 className="text-3xl font-serif mb-8" style={{ color: primaryIndigo }}>Find</h4>
+            <nav className="flex flex-col gap-4 text-lg font-medium underline underline-offset-8" style={{ color: primaryIndigo }}>
+              <Link href="/">Home</Link>
+              <Link href="/contact">Contact</Link>
+              <Link href="/task-2">Task 2</Link>
             </nav>
           </div>
+        </div>
+        <div className="bg-[#EAE7E1] py-16 px-8 text-center border-t border-black/5">
+          <p className="text-[11px] uppercase tracking-[0.4em] font-bold" style={{ color: primaryIndigo }}>
+            All Rights Reserved © 2026 Dr. Maya Reynolds, LLC. | Santa Monica, CA
+          </p>
         </div>
       </footer>
     </main>
