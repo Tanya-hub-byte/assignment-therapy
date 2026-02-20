@@ -1,7 +1,37 @@
 'use client'; 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+// Reusable Reveal Component
+const Reveal = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target); // Trigger only once
+        }
+      },
+      { threshold: 0.15 } // Trigger when 15% of the component is visible
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ease-out transform ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [showFooter, setShowFooter] = useState(false);
@@ -254,59 +284,7 @@ export default function Home() {
     </div>
   </div>
 </section>
-{/* NEW CUSTOM SECTION: OUR OFFICE - Santa Monica Theme & Smooth Transition */}
-<section className="py-24 px-8 bg-white font-gopher overflow-hidden">
-  <div className={`max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 transition-all duration-1000 transform ${isMounted ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-    
-    {/* Left Side: Editorial Image Layout */}
-    <div className="w-full md:w-1/2 grid grid-cols-2 gap-4">
-      <div className="pt-12">
-        <img 
-          src="/office-vibe.jpeg" 
-          alt="Santa Monica healing office atmosphere" 
-          className="w-full aspect-[3/4] object-cover rounded-t-full shadow-md hover:scale-105 transition-transform duration-700" 
-        />
-      </div>
-      <div>
-        <img 
-          src="/specialty-1.jpeg" 
-          alt="Grounding consultation space detail" 
-          className="w-full aspect-[3/4] object-cover rounded-t-full shadow-md hover:scale-105 transition-transform duration-700" 
-        />
-      </div>
-    </div>
 
-    {/* Right Side: Copy & Details - Updated for Santa Monica */}
-    <div className="w-full md:w-1/2 text-left space-y-8">
-      <h2 className="text-5xl md:text-6xl font-serif leading-tight tracking-tighter" style={{ color: '#3E3A5D' }}>
-        A Calm Space <br /> for Healing.
-      </h2>
-      
-      <div className="space-y-6 text-lg leading-relaxed max-w-lg opacity-80" style={{ color: '#3E3A5D' }}>
-        <p>
-          Located in the heart of Santa Monica, my office is a quiet, private sanctuary 
-          designed with natural light and a comfortable, uncluttered environment.
-        </p>
-        <p>
-          Whether we meet for in-person therapy or secure telehealth sessions, you can 
-          expect a warm, grounded space that helps you feel at ease as we work together.
-        </p>
-      </div>
-
-      {/* Supporting Details Table */}
-      <div className="pt-8 border-t grid grid-cols-2 gap-8" style={{ borderColor: '#3E3A5D26' }}>
-        <div>
-          <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-60 mb-2" style={{ color: '#3E3A5D' }}>Location</h4>
-          <p className="font-medium" style={{ color: '#3E3A5D' }}>Santa Monica, CA</p>
-        </div>
-        <div>
-          <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-60 mb-2" style={{ color: '#3E3A5D' }}>Practice Type</h4>
-          <p className="font-medium" style={{ color: '#3E3A5D' }}>In-person & Telehealth</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 {/* FAQ SECTION - Updated for Santa Monica Theme & Profile */}
 <section className="py-24 px-8" style={{ backgroundColor: '#F7F2EE' }}>
   <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 lg:gap-24">

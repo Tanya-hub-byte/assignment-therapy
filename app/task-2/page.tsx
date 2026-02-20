@@ -5,48 +5,58 @@ import Link from 'next/link';
 export default function Task2Page() {
   const [isMounted, setIsMounted] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   // Click animation states
   const [consultClicked, setConsultClicked] = useState(false);
   const [helpClicked, setHelpClicked] = useState(false);
 
-  const bgColorHero = "#F7F2EE";
-  const bgColorStress = "#F3EDF2";
-  const primaryText = "#3E3A5D";
-  const stressText = "#4A445F";
+  // UPDATED THEME COLORS
+  const bgColorHero = "#F7F2EE";    // Soft Ivory
+  const bgColorStress = "#F3EDF2";  // Lavender Off-White
+  const primaryText = "#3E3A5D";    // Deep Indigo
+  const stressText = "#4A445F";     // Dusty Purple
 
-useEffect(() => {
-  setIsMounted(true);
+  useEffect(() => {
+    setIsMounted(true);
 
-  // Explicitly type the variable to avoid the 'implicit any' error
-  let scrollTimeout: NodeJS.Timeout;
+    let hideTimeout: NodeJS.Timeout;
+    let reappearTimeout: NodeJS.Timeout;
 
-  const handleScroll = () => {
-    setShowHeader(true);
+    const handleScroll = () => {
+      // 1. Show header immediately on scroll
+      setShowHeader(true);
 
-    clearTimeout(scrollTimeout);
+      // 2. Clear existing timeouts to reset the logic
+      clearTimeout(hideTimeout);
+      clearTimeout(reappearTimeout);
 
-    scrollTimeout = setTimeout(() => {
-      setShowHeader(false);
-    }, 80); // instant-feel disappearance
-  };
+      // 3. Set header to disappear 80ms after scrolling stops
+      hideTimeout = setTimeout(() => {
+        setShowHeader(false);
 
-  // Ensure you add the event listener
-  window.addEventListener('scroll', handleScroll);
+        // 4. Set header to reappear after 1 second (your requested effect)
+        reappearTimeout = setTimeout(() => {
+          setShowHeader(true);
+        }, 1000); 
 
-  // Clean up to prevent memory leaks
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    clearTimeout(scrollTimeout);
-  };
-}, []);
+      }, 80); 
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(hideTimeout);
+      clearTimeout(reappearTimeout);
+    };
+  }, []);
 
   return (
-    <div className={`min-h-screen transition-opacity duration-1000 ${isMounted ? 'opacity-100' : 'opacity-0'}`}>
+    <div 
+      className={`min-h-screen transition-opacity duration-1000 ${isMounted ? 'opacity-100' : 'opacity-0'} font-gopher`}
+      style={{ backgroundColor: bgColorHero }}
+    >
 
-      {/* HEADER */}
+      {/* HEADER - With Dynamic Scroll Effect */}
       <header
         className={`fixed left-0 top-0 z-50 w-full transition-transform duration-500 ${
           showHeader ? 'translate-y-0' : '-translate-y-full'
@@ -54,16 +64,15 @@ useEffect(() => {
         style={{ backgroundColor: bgColorHero }}
       >
         <nav className="mx-auto flex w-full items-center justify-between px-8 py-10 max-w-7xl">
-          <Link href="/" className="text-3xl font-serif font-bold" style={{ color: primaryText }}>
-            Lilac Template
+          <Link href="/" className="text-3xl font-serif font-bold tracking-tight" style={{ color: primaryText }}>
+            Dr. Maya Reynolds
           </Link>
-          <div className="flex gap-10 text-[12px] uppercase tracking-[0.2em] font-bold" style={{ color: primaryText }}>
-            <Link href="/blog" className="hover:opacity-50">Blog</Link>
-            <Link href="/contact" className="hover:opacity-50">Contact</Link>
+          <div className="flex gap-10 text-[12px] uppercase tracking-[0.3em] font-bold" style={{ color: primaryText }}>
+            <Link href="/blog" className="hover:opacity-50 transition-opacity">Blog</Link>
+            <Link href="/contact" className="hover:opacity-50 transition-opacity">Contact</Link>
           </div>
         </nav>
       </header>
-
       <main style={{ backgroundColor: bgColorHero }}>
 
         {/* HERO */}
@@ -88,24 +97,27 @@ useEffect(() => {
                 Therapy for adults in Santa Monica, California navigating anxiety, trauma, and burnout.
               </p>
 
-              {/* CLICK ANIMATED BUTTON */}
-              <Link
-                href="/contact"
-                onClick={() => setConsultClicked(true)}
-                className="relative inline-flex items-center border px-10 py-5 uppercase tracking-[0.3em] text-[11px] font-bold overflow-hidden"
-                style={{ borderColor: primaryText, color: consultClicked ? 'white' : primaryText }}
-              >
-                <span className="relative z-10">
-                  Schedule a Consultation →
-                </span>
-
-                <div
-                  className={`absolute inset-0 transition-transform duration-500 ${
-                    consultClicked ? 'translate-y-0' : 'translate-y-full'
-                  }`}
-                  style={{ backgroundColor: primaryText }}
-                />
-              </Link>
+              {/* CLICK ANIMATED BUTTON - Instant Theme Highlight */}
+{/* CLICK ANIMATED BUTTON - Fixed Visibility on Hover */}
+<Link
+  href="/contact"
+  onClick={() => setConsultClicked(true)}
+  className={`
+    relative inline-flex items-center border px-10 py-5 
+    uppercase tracking-[0.3em] text-[11px] font-bold 
+    transition-colors duration-300 
+    hover:bg-[#3E3A5D] hover:text-white
+    ${consultClicked ? 'bg-[#3E3A5D] text-white' : 'text-[#3E3A5D]'}
+  `}
+  style={{ 
+    borderColor: "#3E3A5D",
+    // We remove the inline color style to let the Tailwind hover classes work correctly
+  }}
+>
+  <span className="relative z-10 transition-colors duration-300">
+    Schedule a Consultation →
+  </span>
+</Link>
             </div>
           </div>
         </section>
@@ -132,27 +144,36 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* CLICK ANIMATED BOTTOM BAR */}
-            <Link
-              href="/contact"
-              onClick={() => setHelpClicked(true)}
-              className="relative w-full border-t py-10 text-center overflow-hidden"
-              style={{
-                borderColor: `${stressText}1A`,
-                color: helpClicked ? 'white' : stressText,
-              }}
-            >
-              <span className="relative z-10 text-[11px] uppercase tracking-[0.4em] font-bold">
-                See how I help →
-              </span>
-
-              <div
-                className={`absolute inset-0 transition-transform duration-500 ${
-                  helpClicked ? 'translate-y-0' : 'translate-y-full'
-                }`}
-                style={{ backgroundColor: stressText }}
-              />
-            </Link>
+            {/* CLICK ANIMATED BOTTOM BAR - Fixed Visibility and Theme Alignment */}
+<Link
+  href="/contact"
+  onClick={() => setHelpClicked(true)}
+  className={`
+    relative w-full border-t py-10 text-center overflow-hidden 
+    transition-colors duration-300 
+    hover:text-white
+  `}
+  style={{
+    borderColor: `${stressText}33`, // Increased opacity for better grid definition
+    backgroundColor: helpClicked ? stressText : 'transparent',
+    color: helpClicked ? 'white' : stressText,
+  }}
+  // Using onMouseEnter/Leave to handle the "all at once" hover effect for dynamic colors
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = stressText;
+    e.currentTarget.style.color = 'white';
+  }}
+  onMouseLeave={(e) => {
+    if (!helpClicked) {
+      e.currentTarget.style.backgroundColor = 'transparent';
+      e.currentTarget.style.color = stressText;
+    }
+  }}
+>
+  <span className="relative z-10 text-[11px] uppercase tracking-[0.4em] font-bold">
+    See how I help →
+  </span>
+</Link>
           </div>
 
           {/* Right Image */}
@@ -235,93 +256,124 @@ useEffect(() => {
     </div>
   </div>
 </section>
-{/* SUPPORT / MESSAGE SECTION */}
-<section className="w-full">
-
+{/* SUPPORT / MESSAGE SECTION - Realigned for CTA under right content */}
+<section className="w-full font-gopher">
   <div className="grid grid-cols-1 md:grid-cols-2">
 
-    {/* LEFT IMAGE */}
-    <div className="h-[420px] md:h-[520px]">
+    {/* LEFT IMAGE - Height remains consistent with right content */}
+    <div className="h-[500px] md:h-auto">
       <img
         src="/love.webp"
-        alt="Support"
+        alt="Support and grounding"
         className="w-full h-full object-cover"
       />
     </div>
 
-    {/* RIGHT CONTENT */}
-    <div className="bg-[#3E3A5D] text-white flex items-center">
-      <div className="px-10 md:px-16 py-16">
+    {/* RIGHT COLUMN: Contains Content + CTA Bar */}
+    <div className="flex flex-col">
+      {/* Top Part: Text Content */}
+      <div className="bg-[#3E3A5D] text-white flex-grow flex items-center">
+        <div className="px-10 md:px-16 py-16">
+          <h2 className="text-3xl md:text-4xl font-serif leading-snug mb-6">
+            You don’t have to keep <br />
+            <span className="italic font-light">carrying this alone.</span>
+          </h2>
 
-        <h2 className="text-3xl md:text-4xl font-serif leading-snug mb-6">
-          You don’t have to keep <br />
-          <span className="italic">carrying this alone.</span>
-        </h2>
+          <p className="text-sm md:text-base mb-6 opacity-80 uppercase tracking-widest">
+            If any of this feels familiar:
+          </p>
 
-        <p className="text-sm md:text-base mb-6 opacity-90">
-          If any of this feels familiar:
-        </p>
+          <ul className="space-y-3 text-sm md:text-base mb-8 opacity-90">
+            <li>• Constant worry or racing thoughts.</li>
+            <li>• Feeling on edge, even when nothing seems “wrong”.</li>
+            <li>• Exhaustion from pushing through stress.</li>
+            <li>• Lingering effects of past experiences.</li>
+            <li>• High internal pressure or perfectionism.</li>
+          </ul>
 
-        <ul className="space-y-3 text-sm md:text-base mb-8 opacity-95">
-          <li>• Constant worry or racing thoughts.</li>
-          <li>• Feeling on edge, even when nothing seems “wrong”.</li>
-          <li>• Exhaustion from pushing through stress.</li>
-          <li>• Lingering effects of past experiences.</li>
-          <li>• High internal pressure or perfectionism.</li>
-        </ul>
-
-        <p className="text-sm md:text-base opacity-90 leading-relaxed">
-          Many adults in Santa Monica appear capable while quietly carrying this
-          stress. Support can begin with slowing down and understanding what’s
-          beneath the surface.
-        </p>
-
+          <p className="text-sm md:text-base opacity-80 leading-relaxed max-w-md">
+            Many adults in Santa Monica appear capable while quietly carrying this
+            stress. Support can begin with slowing down.
+          </p>
+        </div>
       </div>
+
+      {/* BOTTOM CTA BAR: Now aligned specifically under the right side */}
+      <Link 
+        href="/contact"
+        className="block bg-[#3E3A5D] border-t border-white/20 text-center py-8 transition-colors duration-300 hover:bg-white group"
+      >
+        <button className="text-[11px] tracking-[0.4em] uppercase text-white transition-colors duration-300 group-hover:text-[#4A3F5F] font-bold">
+          Take the First Step →
+        </button>
+      </Link>
     </div>
 
   </div>
-
-  {/* CTA BAR */}
-  <div className="bg-[#3E3A5D] border-t border-white/20 text-center py-5">
-    <button className="text-xs tracking-widest uppercase text-white hover:opacity-80 transition">
-      Take the First Step →
-    </button>
-  </div>
-
 </section>
 
-<section className="bg-bg-lavender-01 w-full">
-  <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-6 lg:px-16 py-16 lg:py-24">
+{/*================================================================================================ */}
+{/* 1. MAIN LAVENDER SECTION BOX - Targeted 1094px x 704px */}
+<section className="bg-[#EAE1F1] w-full flex items-center justify-center py-20 font-gopher">
+  
+  {/* 2. ENCAPSULATING BOX - This controls the total footprint of your content */}
+  <div 
+    className="flex flex-col lg:flex-row items-center justify-between bg-transparent"
+    style={{ width: '1094px', height: '704px' }} // Manual dimensions for the lavender content box
+  >
     
-    {/* LEFT CONTENT */}
-    <div className="lg:w-1/2 w-full">
-      <h2 className="text-4xl lg:text-5xl font-serif text-font-plum-01 mb-6">
+    {/* 3. LEFT TEXT COMPONENT BOX */}
+    <div 
+      className="flex flex-col justify-center pr-10" 
+      style={{ width: '419px', height: '417px' }} // Adjust width to control text flow
+    >
+      {/* Title Size Control */}
+      <h2 className="font-serif text-[#3E3A5D] leading-tight mb-8" style={{ fontSize: '3.75rem' }}>
         Hi, I’m Dr. Maya.
       </h2>
 
-      <p className="text-font-plum-01/90 text-lg leading-relaxed mb-4">
-        I’m a licensed clinical psychologist in Santa Monica working with adults
-        navigating anxiety, trauma, and burnout. Many of my clients appear
-        capable on the outside while quietly feeling overwhelmed.
-      </p>
+      {/* Body Text Box Control */}
+      <div className="space-y-6 text-[#3E3A5D] opacity-90" style={{ fontSize: '1.35rem', lineHeight: '1.6' }}>
+        <p>
+          I’m a licensed clinical psychologist in Santa Monica working with adults
+          navigating anxiety, trauma, and burnout.
+        </p>
+        <p>
+          My work is collaborative, structured, and grounded in evidence-based
+          approaches.
+        </p>
+      </div>
 
-      <p className="text-font-plum-01/90 text-lg leading-relaxed mb-8">
-        My work is collaborative, structured, and grounded in evidence-based
-        approaches that support both emotional insight and nervous system
-        regulation.
-      </p>
-
-      <button className="border border-font-plum-01 text-font-plum-01 px-6 py-3 text-sm tracking-wide hover:bg-font-plum-01 hover:text-white transition">
-        LET'S CONNECT →
-      </button>
+      <button 
+  className="mt-10 border border-[#3E3A5D] text-[#3E3A5D] font-medium tracking-[0.15em] uppercase hover:bg-[#3E3A5D] hover:text-white transition-all duration-300 flex items-center justify-center bg-transparent group"
+  style={{ 
+    width: '180px',      // Increased width to match visual spread in the image
+    height: '48px',      // Increased height for editorial breathing room
+    fontSize: '11px',    // Larger font for readability as seen in reference
+    borderWidth: '0.5px' // Fine, thin border as seen in image_e33b61
+  }}
+>
+  <span className="flex items-center gap-3">
+    LET'S CONNECT 
+    <span className="text-[14px] leading-none mb-0.5 transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  </span>
+</button>
     </div>
 
-    {/* RIGHT IMAGE */}
-    <div className="lg:w-1/2 w-full flex justify-center mt-12 lg:mt-0">
+    {/* 4. RIGHT IMAGE COMPONENT BOX */}
+    <div 
+      className="relative flex items-center justify-center" 
+      style={{ width: '494px', height: '100%' }} // Remaining width from 1094px total
+    >
       <div className="relative">
         
-        {/* Main portrait */}
-        <div className="w-[320px] h-[380px] lg:w-[380px] lg:h-[440px] rounded-[180px] overflow-hidden">
+        {/* 5. DR. MAYA PORTRAIT (Arch Size) */}
+        <div 
+          className="rounded-t-full overflow-hidden flex items-end shadow-sm"
+          style={{ width: '320px', height: '428px' }} // Edit these px to change the Arch
+        >
           <img
             src="/maya-potrait.png"
             alt="Dr. Maya portrait"
@@ -329,11 +381,19 @@ useEffect(() => {
           />
         </div>
 
-        {/* Overlapping flower */}
-        <div className="absolute -bottom-6 -right-6 w-28 h-28 lg:w-32 lg:h-32 rounded-full overflow-hidden border-4 border-bg-lavender-01 shadow-md">
+        {/* 6. OVERLAPPING FLOWER (Circular Accent Size) */}
+        <div 
+          className="absolute rounded-full overflow-hidden"
+          style={{ 
+            width: '144px', 
+            height: '144px', 
+            bottom: '-40px', 
+            right: '-20px' 
+          }} // Edit width/height for size, bottom/right for placement
+        >
           <img
             src="/flower2.webp"
-            alt="Flower"
+            alt="Flower accent"
             className="w-full h-full object-cover"
           />
         </div>
@@ -343,111 +403,66 @@ useEffect(() => {
 
   </div>
 </section>
-{/* OFFICE SECTION */}
-<section 
-  className="pt-28 pb-32"
-  style={{ backgroundColor: '#faf7fc', color: '#4a3f5f' }}
->
-  <div className="max-w-7xl mx-auto px-8">
 
-    {/* ===== TOP GRID ===== */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
+{/*================================================================================================ */}
 
-      {/* LEFT TEXT CONTENT */}
-      <div className="pr-12 flex flex-col justify-center py-16">
-        <p className="uppercase tracking-[0.35em] text-[11px] mb-6 opacity-70">
-          Office
-        </p>
 
-        <h2 className="text-5xl md:text-6xl font-serif leading-[1.1] mb-8">
-          A calm, private space in Santa Monica.
-        </h2>
-
-        <div className="space-y-6 text-lg leading-relaxed max-w-xl opacity-90">
-          <p>
-            The office is designed to feel quiet and grounding, with natural light 
-            and comfortable seating that helps you <span className="italic">slow down</span> as soon as you arrive.
-          </p>
-
-          <p>
-            In-person sessions are available in Santa Monica, with secure telehealth 
-            options across California.
-          </p>
-        </div>
-
-        {/* BUTTON */}
-        <Link
-          href="/contact"
-          className="inline-block mt-12 border border-[#4a3f5f] px-10 py-4 uppercase tracking-[0.3em] text-[11px] font-bold
-                     transition-all duration-500
-                     hover:bg-[#4a3f5f] hover:text-white"
-        >
-          Schedule a Visit →
-        </Link>
-      </div>
-
-      {/* RIGHT IMAGE (office-vibe) */}
-      <div className="relative">
-        <img
-          src="/office-vibe.jpeg"
-          alt="Office interior"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
+{/* QUAD-GRID OFFICE SECTION - Half-Height Edge-to-Edge */}
+<section className="w-full bg-white font-gopher overflow-hidden border-t border-[#3E3A5D1A]">
+  {/* Defining fixed heights for rows to cut vertical space in half */}
+  <div className="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] w-full items-stretch">
+    
+    {/* ROW 1, COL 1: Text & CTA */}
+    <div className="flex flex-col justify-center p-12 lg:px-24 border-b border-r border-[#3E3A5D1A]" style={{ height: '400px' }}>
+      <span className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-4" style={{ color: '#3E3A5D' }}>Office</span>
+      <h2 className="text-3xl md:text-4xl font-serif mb-6 leading-tight" style={{ color: '#3E3A5D' }}>
+        A calm, private space in Santa Monica.
+      </h2>
+      <Link href="/contact" className="inline-flex items-center justify-center border border-[#3E3A5D] px-8 py-3 text-[10px] uppercase tracking-widest font-bold hover:bg-[#3E3A5D] hover:text-white transition-all w-fit">
+        Schedule a Visit →
+      </Link>
     </div>
 
-    {/* ===== BOTTOM GRID ===== */}
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-start">
-
-      {/* LEFT IMAGE (specialty-1) */}
-      <div className="relative">
-        <img
-          src="/specialty-1.jpeg"
-          alt="Therapy office seating"
-          className="w-full h-[500px] object-cover"
-        />
-      </div>
-
-      {/* RIGHT ACCORDION */}
-      <div className="pl-16 pt-20">
-
-        <div className="border-t border-[#4a3f5f]/30">
-
-          {/* ADDRESS */}
-          <details className="group border-b border-[#4a3f5f]/30">
-            <summary className="flex justify-between items-center cursor-pointer list-none py-8 text-3xl font-serif">
-              <span>Address</span>
-              <span className="text-3xl transition-transform duration-300 group-open:rotate-45">
-                +
-              </span>
-            </summary>
-            <div className="pb-8 text-lg opacity-80 leading-relaxed">
-              123th Street 45 W, Santa Monica, CA 90401
-            </div>
-          </details>
-
-          {/* AVAILABILITY */}
-          <details className="group border-b border-[#4a3f5f]/30" open>
-            <summary className="flex justify-between items-center cursor-pointer list-none py-8 text-3xl font-serif">
-              <span>Availability</span>
-              <span className="text-3xl transition-transform duration-300 group-open:rotate-45">
-                +
-              </span>
-            </summary>
-            <div className="pb-10 text-lg opacity-80 leading-relaxed max-w-md">
-              In-person sessions in Santa Monica with secure hybrid options across California.
-            </div>
-          </details>
-
-        </div>
-
-      </div>
-
+    {/* ROW 1, COL 2: Office Image 1 */}
+    <div className="relative border-b border-[#3E3A5D1A]" style={{ height: '400px' }}>
+      <img 
+        src="/office-vibe.jpeg" 
+        alt="Santa Monica Therapy Office" 
+        className="w-full h-full object-cover" 
+      />
     </div>
 
+    {/* ROW 2, COL 1: Office Image 2 */}
+    <div className="relative border-r border-[#3E3A5D1A]" style={{ height: '400px' }}>
+      <img 
+        src="/specialty-1.jpeg" 
+        alt="Comfortable seating area" 
+        className="w-full h-full object-cover" 
+      />
+    </div>
+
+    {/* ROW 2, COL 2: Info Accordion */}
+    <div className="flex flex-col justify-center p-12 lg:px-24" style={{ height: '400px' }}>
+      <div className="space-y-0 border-t border-[#3E3A5D1A]">
+        <details className="group border-b border-[#3E3A5D1A]">
+          <summary className="flex justify-between items-center cursor-pointer py-6 text-xl font-serif" style={{ color: '#3E3A5D' }}>
+            Address <span className="text-2xl font-light group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <div className="pb-6 opacity-70">Santa Monica, California</div>
+        </details>
+        <details className="group border-b border-[#3E3A5D1A]">
+          <summary className="flex justify-between items-center cursor-pointer py-6 text-xl font-serif" style={{ color: '#3E3A5D' }}>
+            Availability <span className="text-2xl font-light group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <div className="pb-6 opacity-70">By Appointment Only</div>
+        </details>
+      </div>
+    </div>
   </div>
 </section>
+
+{/*================================================================================================ */}
+
 {/* FAQs SECTION */}
 <section
   className="py-20"
@@ -468,7 +483,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* RIGHT FAQ CONTENT */}
+  {/* RIGHT FAQ CONTENT */}
       <div>
 
         <h2 className="text-5xl font-serif mb-12">
@@ -529,6 +544,10 @@ useEffect(() => {
     </div>
   </div>
 </section>
+
+{/*================================================================================================ */}
+
+
 {/* PROFESSIONAL BACKGROUND SECTION */}
 <section
   className="py-20 flex items-center"
@@ -591,6 +610,8 @@ useEffect(() => {
 
   </div>
 </section>
+
+{/*================================================================================================ */}
 {/* CTA SECTION */}
 <section
   className="flex items-center justify-center text-center px-8"
@@ -623,7 +644,9 @@ useEffect(() => {
 
   </div>
 </section>
-import Link from "next/link";
+
+{/*================================================================================================ */}
+
 
 {/* MAIN FOOTER */}
 <section
@@ -679,6 +702,10 @@ import Link from "next/link";
 
   </div>
 </section>
+
+{/*================================================================================================ */}
+
+
 {/* BOTTOM LEGAL */}
 <section
   style={{ backgroundColor: '#ede6f2' }}
