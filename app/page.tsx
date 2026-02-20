@@ -2,36 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 // Reusable Reveal Component
-const Reveal = ({ children }: { children: React.ReactNode }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target); // Trigger only once
-        }
-      },
-      { threshold: 0.15 } // Trigger when 15% of the component is visible
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out transform ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
-      }`}
-    >
-      {children}
-    </div>
-  );
-};
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [showFooter, setShowFooter] = useState(false);
@@ -40,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     setIsMounted(true);
     
-    // Intersection Observer for Footer Reveal
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) setShowFooter(true);
@@ -57,12 +28,13 @@ export default function Home() {
   };
 
   return (
+    
     <main 
       style={{ backgroundColor: '#F7F2EE' }}
       className={`transition-opacity duration-1000 ${isMounted ? 'opacity-100' : 'opacity-0'} min-h-screen text-[#3E3A5D] selection:bg-maya-primary selection:text-white`}
     >
       
-      {/* NAVIGATION - Now scrolls with the page */}
+      {/* NAVIGATION */}
 <nav className="absolute top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-transparent">
   <div onClick={() => window.location.reload()} className="flex items-center gap-3 cursor-pointer group">
     <div className="flex flex-col">
@@ -77,7 +49,8 @@ export default function Home() {
   </div>
 </nav>
 
-      {/* HERO SECTION - Restore Dr. Maya Portrait */}
+      {/* HERO SECTION -  Dr. Maya Portrait */}
+      
       <section className="min-h-screen flex flex-col md:flex-row items-center px-10 pt-32 pb-20 gap-16 max-w-7xl mx-auto">
         <div className="w-full md:w-1/2 flex justify-center">
           <div className="relative w-full max-w-lg aspect-[4/5] overflow-hidden rounded-t-full shadow-sm">
@@ -110,6 +83,7 @@ export default function Home() {
       </section>
 
       {/* INTRO SECTION - Proportional single-view layout */}
+      
 <section className="bg-[#E5E0DA] flex flex-col md:flex-row h-screen max-h-[650px]">
   {/* Left Content Side */}
   <div className="w-full md:w-1/2 flex flex-col border-r border-[#3E3A5D]/5">
@@ -149,9 +123,9 @@ export default function Home() {
   </div>
 </section>
 
-  
 
-      {/* 2. MY SPECIALTIES SECTION - Extracted from Profile Modalities */}
+      {/* 2. MY SPECIALTIES SECTION */}
+   
 <section className="py-24 px-8 text-center" style={{ backgroundColor: '#F7F2EE' }}>
   <h2 className="text-5xl font-serif mb-20 text-[#3E3A5D]">My Specialties</h2>
   
@@ -196,6 +170,7 @@ export default function Home() {
 </section>
 
 {/* 3. ALONE SECTION - SEO & Tone Alignment */}
+
 <section className="bg-white flex flex-col md:flex-row h-screen max-h-[650px] overflow-hidden">
   <div className="w-full md:w-1/2 relative h-full">
     <img src="/alone.webp" alt="Therapeutic presence" className="w-full h-full object-cover" />
@@ -242,7 +217,8 @@ export default function Home() {
     </Link>
   </div>
 </section>
-{/* 1. DR. MAYA BIO SECTION - Updated for Santa Monica Profile */}
+
+{/* 1. DR. MAYA BIO SECTION  */}
 <section className="bg-[#F5F1EB] flex flex-col md:flex-row h-screen max-h-[650px] overflow-hidden font-gopher">
   <div className="w-full md:w-1/2 flex flex-col justify-center px-16 md:px-24">
     <div className="max-w-md">
@@ -285,7 +261,7 @@ export default function Home() {
   </div>
 </section>
 
-{/* FAQ SECTION - Updated for Santa Monica Theme & Profile */}
+{/* FAQ SECTION */}
 <section className="py-24 px-8" style={{ backgroundColor: '#F7F2EE' }}>
   <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 lg:gap-24">
     
@@ -335,7 +311,7 @@ export default function Home() {
     </div>
   </div>
 </section>
-{/* PROFESSIONAL BACKGROUND SECTION - Updated for Santa Monica Profile */}
+{/* PROFESSIONAL BACKGROUND SECTION  */}
 <section className="py-24 px-8 font-gopher" style={{ backgroundColor: '#E5E0DA' }}>
   <div className="max-w-4xl mx-auto text-center">
     <h2 className="text-4xl md:text-5xl font-serif mb-16" style={{ color: '#3E3A5D' }}>
@@ -370,7 +346,7 @@ export default function Home() {
     </div>
   </div>
 </section>
-{/* GET STARTED SECTION - Updated for Santa Monica Theme & Profile */}
+{/* GET STARTED SECTION  */}
 <section className="py-32 px-8 font-gopher" style={{ backgroundColor: '#3E3A5D' }}> 
   <div className="max-w-4xl mx-auto text-center text-[#ffffff]">
     <h2 className="text-5xl md:text-7xl font-serif mb-8 tracking-tighter">
@@ -397,7 +373,7 @@ export default function Home() {
     </div>
   </div>
 </section>
-      {/* ANIMATED FOOTER - Santa Monica Theme Alignment */}
+      {/* ANIMATED FOOTER  */}
 <footer 
   ref={footerRef}
   className={`pt-20 transition-all duration-1000 transform ${
@@ -469,11 +445,11 @@ export default function Home() {
   </a>
 </p>
 
-      {/* Copyright Line - Updated with Santa Monica Branding */}
+      {/* Copyright Line */}
       <div className="pt-10 border-t border-black/5">
         <p 
           className="text-[11px] uppercase tracking-[0.4em] font-bold"
-          style={{ color: '#3E3A5D' }} // Switched to Primary Indigo
+          style={{ color: '#3E3A5D' }} 
         >
           All Rights Reserved © 2026 Dr. Maya Reynolds, LLC. | Santa Monica, CA
         </p>
